@@ -70,13 +70,14 @@ export default function (data) {
     }) || errorRate.add(1);
   });
 
-  group('Public Endpoints', function () {
-    // Version endpoint
-    const res = http.get(`${apiUrl}/api/v1/version`);
+  group('API Endpoints', function () {
+    // OpenAPI docs endpoint (publicly accessible)
+    const res = http.get(`${apiUrl}/api/v2/openapi.json`);
     requestCount.add(1);
     apiLatency.add(res.timings.duration);
     check(res, {
-      'version status is 200 or 404': (r) => r.status === 200 || r.status === 404,
+      'openapi status is 200': (r) => r.status === 200,
+      'openapi response time < 200ms': (r) => r.timings.duration < 200,
     }) || errorRate.add(1);
   });
 
