@@ -3,7 +3,7 @@
 # Target environment
 target:
   # Backend API URL (internal cluster DNS)
-  apiUrl: "http://codexdb-backend.codex-dev.svc.cluster.local:8000"
+  apiUrl: "http://codex-backend.codex-dev.svc.cluster.local:8000"
   # Frontend URL (for browser tests, if enabled)
   frontendUrl: "https://codex-dev.k8s.ng20.org"
 
@@ -30,7 +30,7 @@ schedule: "0 6 * * *"  # Daily at 6 AM UTC
 prometheus:
   enabled: true
   # Push gateway or remote write URL
-  pushGateway: "http://observability-stack-kube-prome-prometheus.monitoring.svc.cluster.local:9090/api/v1/write"
+  pushGateway: "http://observability-stack-kube-p-prometheus.monitoring.svc.cluster.local:9090/api/v1/write"
 
 # Resource limits for k6 pods
 resources:
