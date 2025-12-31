@@ -1,0 +1,5 @@
+apiVersion: v2
+name: k6-performance-tests
+description: k6 performance tests for Codex application
+version: 0.1.0
+appVersion: "0.52.0"

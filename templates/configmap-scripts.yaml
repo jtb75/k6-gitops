@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: k6-test-scripts
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: k6-performance
+data:
+  api-load-test.js: |
+{{ .Files.Get "scripts/api-load-test.js" | indent 4 }}
+  auth-flow-test.js: |
+{{ .Files.Get "scripts/auth-flow-test.js" | indent 4 }}
+  health-check.js: |
+{{ .Files.Get "scripts/health-check.js" | indent 4 }}

@@ -1,0 +1,61 @@
+{{- if .Values.schedule }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: k6-scheduled-test
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: k6-performance
+    app.kubernetes.io/component: scheduled-test
+spec:
+  schedule: {{ .Values.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 86400  # Clean up after 24 hours
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: k6-performance
+            app.kubernetes.io/component: test-runner
+        spec:
+          serviceAccountName: {{ .Values.serviceAccount.name }}
+          restartPolicy: Never
+          containers:
+            - name: k6
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command:
+                - k6
+                - run
+                - --vus={{ .Values.tests.vus }}
+                - --duration={{ .Values.tests.duration }}
+                {{- if .Values.prometheus.enabled }}
+                - --out=experimental-prometheus-rw
+                {{- end }}
+                - /scripts/api-load-test.js
+              env:
+                - name: K6_API_URL
+                  value: {{ .Values.target.apiUrl | quote }}
+                - name: K6_FRONTEND_URL
+                  value: {{ .Values.target.frontendUrl | quote }}
+                {{- if .Values.prometheus.enabled }}
+                - name: K6_PROMETHEUS_RW_SERVER_URL
+                  value: {{ .Values.prometheus.pushGateway | quote }}
+                - name: K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM
+                  value: "true"
+                {{- end }}
+              resources:
+                {{- toYaml .Values.resources | nindent 16 }}
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                  readOnly: true
+          volumes:
+            - name: scripts
+              configMap:
+                name: k6-test-scripts
+{{- end }}

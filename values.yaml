@@ -1,0 +1,50 @@
+# k6 Performance Tests Configuration
+
+# Target environment
+target:
+  # Backend API URL (internal cluster DNS)
+  apiUrl: "http://codexdb-backend.codex-dev.svc.cluster.local:8000"
+  # Frontend URL (for browser tests, if enabled)
+  frontendUrl: "https://codex-dev.k8s.ng20.org"
+
+# k6 image configuration
+image:
+  repository: grafana/k6
+  tag: "0.52.0"
+  pullPolicy: IfNotPresent
+
+# Test configuration
+tests:
+  # Virtual users for load testing
+  vus: 10
+  # Test duration
+  duration: "5m"
+  # Iterations (if not using duration)
+  iterations: null
+
+# Schedule for automated runs (cron format)
+# Empty string disables scheduled runs
+schedule: "0 6 * * *"  # Daily at 6 AM UTC
+
+# Prometheus remote write configuration
+prometheus:
+  enabled: true
+  # Push gateway or remote write URL
+  pushGateway: "http://observability-stack-kube-prome-prometheus.monitoring.svc.cluster.local:9090/api/v1/write"
+
+# Resource limits for k6 pods
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+# Namespace for running tests
+namespace: k6-perf
+
+# Service account
+serviceAccount:
+  create: true
+  name: k6-runner
