@@ -29,7 +29,7 @@ export const options = {
 // Setup - runs once before tests
 export function setup() {
   // Verify API is accessible
-  const res = http.get(`${API_URL}/api/v1/health`);
+  const res = http.get(`${API_URL}/health`);
   if (res.status !== 200) {
     throw new Error(`API health check failed: ${res.status}`);
   }
@@ -43,7 +43,7 @@ export default function (data) {
 
   group('Health Endpoints', function () {
     // Health check
-    let res = http.get(`${apiUrl}/api/v1/health`);
+    let res = http.get(`${apiUrl}/health`);
     requestCount.add(1);
     apiLatency.add(res.timings.duration);
     check(res, {
@@ -51,8 +51,8 @@ export default function (data) {
       'health response time < 100ms': (r) => r.timings.duration < 100,
     }) || errorRate.add(1);
 
-    // Readiness check
-    res = http.get(`${apiUrl}/api/v1/ready`);
+    // Readiness check (use v2 health endpoint)
+    res = http.get(`${apiUrl}/api/v2/health`);
     requestCount.add(1);
     apiLatency.add(res.timings.duration);
     check(res, {

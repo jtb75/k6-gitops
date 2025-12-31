@@ -22,7 +22,7 @@ export const options = {
 };
 
 export function setup() {
-  const res = http.get(`${API_URL}/api/v1/health`);
+  const res = http.get(`${API_URL}/health`);
   if (res.status !== 200) {
     throw new Error(`API not available: ${res.status}`);
   }

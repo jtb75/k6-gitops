@@ -20,14 +20,14 @@ export const options = {
 
 export default function () {
   // Health endpoint
-  let res = http.get(`${API_URL}/api/v1/health`);
+  let res = http.get(`${API_URL}/health`);
   check(res, {
     'health status 200': (r) => r.status === 200,
     'health response < 100ms': (r) => r.timings.duration < 100,
   }) || healthErrors.add(1);
 
-  // Readiness endpoint
-  res = http.get(`${API_URL}/api/v1/ready`);
+  // Readiness endpoint (use v2 health)
+  res = http.get(`${API_URL}/api/v2/health`);
   check(res, {
     'ready status 200': (r) => r.status === 200,
   }) || healthErrors.add(1);

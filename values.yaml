@@ -27,8 +27,10 @@ tests:
 schedule: "0 6 * * *"  # Daily at 6 AM UTC
 
 # Prometheus remote write configuration
+# Note: Requires Prometheus remote write receiver to be enabled
+# To enable: prometheusSpec.enableRemoteWriteReceiver: true in kube-prometheus-stack
 prometheus:
-  enabled: true
+  enabled: false
   # Push gateway or remote write URL
   pushGateway: "http://observability-stack-kube-p-prometheus.monitoring.svc.cluster.local:9090/api/v1/write"
 
